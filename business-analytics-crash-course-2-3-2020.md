@@ -1,13 +1,13 @@
 2-3-2020 Class Notes
 ====================
 
-# Opening
+## Opening
 
 * job search update
 * share recent experiences
 * opportunity to ask questions
 
-# topics for today:
+## topics for today
 
 * analytics overview and random deep dive into pet subtopics
      * supervised vs unsupervised?
