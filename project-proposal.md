@@ -11,7 +11,7 @@ That they make a few interoperable tools similar to SecurityOnion network securi
 
 2.  that they serialize that machine learning model and make it available as a web api, using python Flask. That that api accept a netflow record or records, and that it make a multiclass prediction for each record for whether it is malicious (or what kind of malicious)
 
-3.  that they right another small program which receives a pcap file and which can parse netflow records out of it, using Bro or the like. This program would call the api from (2), receive the predictions, and if the predictions are over some threshold, present the results to the user somehow.
+3.  that they write another small program which receives a pcap file and which can parse netflow records out of it, using Bro or the like. This program would call the api from (2), receive the predictions, and if the predictions are over some threshold, present the results to the user somehow.
 
     3.5   that the program from 3 may save alerts it detects to a database
 
