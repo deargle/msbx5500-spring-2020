@@ -138,9 +138,68 @@ Do this:
   var named `MONGODB_URI`][1], so let's read from that in our app.py file
   (`os.getenv` and `docker-compose.yml`...)
 
-  And oops the [mongodb docker image docs](https://hub.docker.com/_/mongo) say that
+  ~And oops the [mongodb docker image docs](https://hub.docker.com/_/mongo) say that
   we need to set some env vars for the root username and password. So let's add
   those to our `.env` file, and reference them in the `mongo` section of our
-  docker-compose.yml, and also use them to build the web's `MONGODB_URI` env var.
+  docker-compose.yml, and also use them to build the web's `MONGODB_URI` env var.~
 
   [1]: https://devcenter.heroku.com/articles/mongolab#getting-your-connection-uri
+
+  Just kidding, setting the above env vars makes auth a headache, and it's
+  unnecessary for a dev environment anyway, so actually don't put any env vars
+  for mongo in `.env` and modify the mongo url in `docker-compose.yml` to not
+  use those either. Restart your docker containers to load the new config for mongo
+  (`docker-compose down`, `docker-compose up`).
+
+  We'll use the mongodb to store files. This is done under the mongo hood using
+  GridFS, which library comes along with a `pymongo` python package install. We
+  instantiate a `fs` var in `app.py` which we will use to access the mongo filestore.
+
+  I wrote a simple get-only html route and template called `/files` and `files.html`
+  respectively which let us (1) view a list of uploaded files, and (2) upload
+  new files. Check out the javascript on `files.html`. Before I wrote this lab,
+  I had never used javascript to work with files, but look at what I made. I
+  just copied a bunch of pieces from the MDN page on working with files and
+  it's mine now. I made two other routes -- `/uploads/<path:filename>` and
+  `/files.json`, plus a convenience function `_get_files()`, in `app.py`. The
+  `/uploads` route uses a function called `save_file` that the Flask-PyMongo library attaches to the flask-aware `mongo` object to, well, save a file. `/files.json` returns a,
+  well, json representation of our list of files. We'll do something with that later
+  with javascript to dynamically render our `files.html` page. The `/files` route
+  returns HTML which is mostly just a few buttons and lists and le' javascript.
+
+
+## Datastores on heroku
+
+Dynos on heroku use ephemeral filesystems. Grok this. In order to be able to scale
+dynos, such as what our `web` docker container will be, heroku will spin up multiple
+copies of the web dyno and round-robin assign them to handle traffic. Each will be
+a clone container, with its own filesystem, which filesystem will be independent of
+the filesystems of containers of which it is a clone. Grok that. Heroku container
+filesystems are not guaranteed to stick around. They are _ephemeral_. **ephemeral**.
+Like the money in your bank account. _**ephemeral**_. So where can you store data,
+if not on a container filesystem? If you were managing your own virtual machine,
+or cloud instance, you could spin up a database running on the same machine and
+call out to it from your web app. That's kind of what we're doing with our
+docker-compose containers -- spinning up a web dyno and two database containers
+that are all on the same machine, technically, but actually which run separately
+and are networked together via docker. On heroku, you do not spin up datastore
+services. Instead, you attach heroku _addons_ to your dynos to act as datastores.
+Elsewhere, heroku or whomever is running a bank of postresql servers, or mongodb
+servers, and they give you a slice of their services which can be used by your dyno.
+Typically, when you attach a heroku datastore addon, a config var (env var) is set
+on your dyno which is a connection string to the given heroku datastore addon.
+The documentation for the addon will say which config vars get set where. This is
+really nice, because if you use an env var by the same name in your code to tell
+your apps how to talk to the datastores, then your app will be able to access
+the _heroku specific_ datastore url when the app is running on heroku. That's why
+we did what we did above, with the `os.getenv` business matching `DATABASE_URL`
+and `MONGO_URI` or whatever it was and no I will not scroll up to check.
+
+So all ("all") we have to do now is deploy our web docker container to the heroku
+container repository, create a new heroku app, attach a psql and a mongodb addon
+to that app, and then deploy our web container as a web dyno to that app. In some
+order related to the above.
+
+It should work seamlessly, but it probably won't.
+
+** Coming soon! **
