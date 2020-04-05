@@ -259,6 +259,20 @@ do what I just did. I now stop writing the lab.
 
 [1]: https://devcenter.heroku.com/articles/container-registry-and-runtime
 
+
+## Using a more lightweight Docker basefile, based on Alpine instead of Ubuntu.
+
+I saw references to an `alpine` base docker image which is much more lightweight
+than the full `ubuntu16` image -- less running processes, much smaller, etc. I
+google for one that provides python, which leads me to the [dockerhub page for all
+official docker python images](https://hub.docker.com/_/python). I poke around
+the readme some, and see in the examples, that it uses alpine as its base image.
+(I could confirm by viewing these images' own Dockerfiles, but I'll just trust.)
+See, docker images have deep dependencies. Most all start with a `FROM <something>`
+statement at the top, upon which they build. We'll do the same. I edit my Dockerfile
+top line to be `FROM python:2`, and I build and run again. It still works, but
+now I'm trendy, so I keep it. Python3 is trendier, but meh for now.
+
 # Deliverables
 
 I don't know, just do the above. You'll need to piece together all of the lab...
