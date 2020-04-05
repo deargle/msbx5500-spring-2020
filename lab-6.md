@@ -202,4 +202,65 @@ order related to the above.
 
 It should work seamlessly, but it probably won't.
 
-** Coming soon! **
+## Actually doing the heroku deploy
+
+Heroku won't use our docker-compose.yml, so let's make sure we can run our
+docker image without docker-compose. Run `docker images` to see the list of
+images that docker-compose has created and registered with the docker service.
+Deploy the one that ends with `_web` -- it will be named based on the folder
+name of your project. Try running it. For example, with my folder structure,
+I run:
+
+  docker run security-analytics-docker_web
+
+Oops, gunicron not found. Oops, I never added it to the requirements.txt file,
+because it wasn't needed when running `docker-compose`. I check/google `pip
+gunicorn` to get the latest gunicorn version, and I add it to the requirements.txt
+file.
+
+  gunicorn~=20.0.4
+
+I run `docker-compose build web` again. Docker recognizes that the line in the Dockerfile that copies `requirements.txt` needs to be run anew, so it does so, and runs every line after that instruction as well. It doesn't recreate the earlier layers of the container.
+
+Then I run the `docker run` command above again. Oops, some obscure error that I have seen before which I know means that gunicorn > v20 is python3 only, but
+apparently we're running python 2. I look to the top of the Dockerfile to see
+what base image we're building from -- it's `ubuntu:16`-ish. I google and confirm
+my inkling that the `python` command on this distro is python2. I know that
+ubuntu _can_ run python3, but meh, everything was working before on python2
+before gunicorn, so I just step back down to gunicorn v19 which I know from past
+experience still supports python2. I update my requirements.txt:
+
+  gunicorn~=19.10.0
+
+`docker-compose build web` and then `docker run` again. Oops, now it complains
+that `'' is not a valid port number.`. With my lightning-fast
+discernment I remember that the dockerfile is trying to run a `gunicorn`
+command which uses a `$PORT` env var. We haven't set it. It needs to be
+passed to the docker container using the `-e` flag on the run command. So,
+using arbitrary port 5000,
+
+  docker run -e PORT=5000 security-analytics-docker_web
+
+It now complains about the `MONGO_URI` not being set. I'm okay with that,
+because I know that heroku will set that when I add the mongo addon.
+
+So I follow the [stupid-easy instructions on heroku docs][1] for deploying a docker
+container as a dyno. I run `heroku open` and see that the app has crashed. I
+run `heroku logs` and see that it's still missing the mongo_uri. I now
+add the postgresql and mongodb addons for heroku. I google them both, scroll
+towards the bottom of the addons' landing pages, and find these commands:
+
+  heroku addons:create (the one for psql)
+  heroku addons:create (the one for mongodb)
+
+Heroku automatically redeploys my app. I refresh the url, and boom it's working.
+I then open the `lab-6.md` file in atom and update the instructions for how to
+do what I just did. I now stop writing the lab.
+
+[1]: https://devcenter.heroku.com/articles/container-registry-and-runtime
+
+# Deliverables
+
+I don't know, just do the above. You'll need to piece together all of the lab...
+pieces... soon in order to do the security project, but we're getting there.
+Docker is enough for one lab.
