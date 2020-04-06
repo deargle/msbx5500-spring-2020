@@ -28,7 +28,7 @@ Datasets
 
 Two datasets.
 
-They can use CTU-13.  They are familiar with it already.  The data looks a little different than kdcup.  It is netflow data.
+They can use CTU-13.  They are familiar with it already.  The data looks a little different than kddcup.  It is netflow data.
 
 It is labeled, yes, but mostly at the level of malicious vs benign.
 
@@ -175,3 +175,44 @@ Hmm, [flask has its own .flaskenv](https://flask.palletsprojects.com/en/1.1.x/cl
 I got a docker-compose working which I think will respect $PORT when the web app
 is built on heroku, but which allows docker-compose to override and run `flask run`
 otherwise (heroku doesn't use docker-compose). Repo here: [https://github.com/deargle/security-analytics-docker](https://github.com/deargle/security-analytics-docker)
+
+# 4/6/2020 | Project breakdown out of class brainstorm
+
+**Project purpose?** A web-based tool which receives pcap files, parses them into netflow records, feeds those records against model(s) for predictions of is_bot (cause that's what ctu-13 does), then reports back on which records are malicious (via website)
+
+modules
+	* a python function that parses pcaps into netflows
+	* a single code file that trains the models themselves, based on any arbitrary ctu-13 dataset. outputs the models, in pickled format
+		* `models = [model for model in pickle.load(os.listdir('models'))]``
+		* multiple models --
+  			* different datasets
+  			* different classifiers for a single given dataset
+		* start with a single dataset, two classifiers
+		* flask code which loads pickled models
+	* a CRISP-DM report on the performance of the chosen models (word document? html?)
+		* feature importances
+		* talks about all of this code in the deployment
+		* markdown
+	* a way for the user to upload pcap files
+		* to a mongodb
+	* a way to store and display alerts if netflows surpass a certain malware-likelihood threshold/cutoff
+		* psql
+
+* Professor will provide
+	* javascript to interact with skeleton routes that y'all will fill out for the app
+	* flask route shells
+	* a docker container which includes argus preinstalled
+
+I want the whole class to have as a deliverable a single git repository
+	this will teach you all how to work on a shared project together in Git. It will be nigthmarish, you will have to "resolve git conflicts"
+	I guess I'll set up the common repo, but then each of you is given push permissions to it, and sure why not, merge permissions. You'll clone it to your local machines to work on it
+	I also want each of you to deploy it to your own heroku instances
+	so one single shared github repo, but each person has their own heroku instance. Which means, no github integration for the heroku app. You'll need to use heroku cli from your clone to push to your apps' own git repositoryies (the ones hosted by heroku, the ones associated 1-to-1 for each app)
+
+
+# Deliverables
+
+* A single class github repository
+* A heroku deployment of the final repo for each class member
+* A markdown writeup within the final git repository which follows CRIPSP-DM format
+* Students in cyber-security, don't forget that you'll have a presentation, also
