@@ -273,6 +273,22 @@ statement at the top, upon which they build. We'll do the same. I edit my Docker
 top line to be `FROM python:2`, and I build and run again. It still works, but
 now I'm trendy, so I keep it. Python3 is trendier, but meh for now.
 
+## Running arbitrary commands from within the heroku environment
+
+Remember above when we ran a python script which initialized our database?
+We'll need to do that again, but pointing at the database that heroku will be using.
+One way that we can do that is by launching a one-off dyno on heroku, which will
+have our files in it, and running the initialization script from within that
+one-off dyno. Another way that we could do it is by fetching our heroku DATABASE_URL
+by running `heroku config` from a heroku cli, and then manually setting the `DATABASE_URL`
+in our environment where our docker container could use it.
+Let's do the first one, though.
+
+  heroku run python init_psql_db.py
+
+Then, visit your heroku app url and confirm that the `/db_test` lists your dummy
+users. :tada:
+
 # Deliverables
 
 I don't know, just do the above. You'll need to piece together all of the lab...
