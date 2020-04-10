@@ -117,7 +117,7 @@ Do this:
 
   Check out the docs when you run `docker-compose run`, then do the following.
 
-    docker-compose run web python init_psql_db.py
+      docker-compose run web python init_psql_db.py
 
   Remember that the psql container will need to be running when you run this, so
   that the web app can connect to it. (Confirm with `docker-compose ps`).
@@ -162,7 +162,8 @@ Do this:
   just copied a bunch of pieces from the MDN page on working with files and
   it's mine now. I made two other routes -- `/uploads/<path:filename>` and
   `/files.json`, plus a convenience function `_get_files()`, in `app.py`. The
-  `/uploads` route uses a function called `save_file` that the Flask-PyMongo library attaches to the flask-aware `mongo` object to, well, save a file. `/files.json` returns a,
+  `/uploads` route uses a function called `save_file` that the Flask-PyMongo library
+  attaches to the flask-aware `mongo` object to, well, save a file. `/files.json` returns a,
   well, json representation of our list of files. We'll do something with that later
   with javascript to dynamically render our `files.html` page. The `/files` route
   returns HTML which is mostly just a few buttons and lists and le' javascript.
@@ -211,14 +212,14 @@ Deploy the one that ends with `_web` -- it will be named based on the folder
 name of your project. Try running it. For example, with my folder structure,
 I run:
 
-  docker run security-analytics-docker_web
+    docker run security-analytics-docker_web
 
 Oops, gunicron not found. Oops, I never added it to the requirements.txt file,
 because it wasn't needed when running `docker-compose`. I check/google `pip
 gunicorn` to get the latest gunicorn version, and I add it to the requirements.txt
 file.
 
-  gunicorn~=20.0.4
+    gunicorn~=20.0.4
 
 I run `docker-compose build web` again. Docker recognizes that the line in the Dockerfile that copies `requirements.txt` needs to be run anew, so it does so, and runs every line after that instruction as well. It doesn't recreate the earlier layers of the container.
 
@@ -230,7 +231,7 @@ ubuntu _can_ run python3, but meh, everything was working before on python2
 before gunicorn, so I just step back down to gunicorn v19 which I know from past
 experience still supports python2. I update my requirements.txt:
 
-  gunicorn~=19.10.0
+    gunicorn~=19.10.0
 
 `docker-compose build web` and then `docker run` again. Oops, now it complains
 that `'' is not a valid port number.`. With my lightning-fast
@@ -239,7 +240,7 @@ command which uses a `$PORT` env var. We haven't set it. It needs to be
 passed to the docker container using the `-e` flag on the run command. So,
 using arbitrary port 5000,
 
-  docker run -e PORT=5000 security-analytics-docker_web
+    docker run -e PORT=5000 security-analytics-docker_web
 
 It now complains about the `MONGO_URI` not being set. I'm okay with that,
 because I know that heroku will set that when I add the mongo addon.
@@ -250,14 +251,22 @@ run `heroku logs` and see that it's still missing the mongo_uri. I now
 add the postgresql and mongodb addons for heroku. I google them both, scroll
 towards the bottom of the addons' landing pages, and find these commands:
 
-  heroku addons:create (the one for psql)
-  heroku addons:create (the one for mongodb)
+    heroku addons:create (the one for psql)
+    heroku addons:create (the one for mongodb)
 
 Heroku automatically redeploys my app. I refresh the url, and boom it's working.
 I then open the `lab-6.md` file in atom and update the instructions for how to
 do what I just did. I now stop writing the lab.
 
 [1]: https://devcenter.heroku.com/articles/container-registry-and-runtime
+
+## Getting `heroku` commands inside the GCP container.
+
+TODO: explain this better
+
+You could use something like this https://hub.docker.com/r/wingrunr21/alpine-heroku-cli/,
+creating an alias for `heroku` command pointing to the full `docker run` command
+for the container, as above for `docker-compose`.
 
 
 ## Using a more lightweight Docker basefile, based on Alpine instead of Ubuntu.
@@ -284,7 +293,7 @@ by running `heroku config` from a heroku cli, and then manually setting the `DAT
 in our environment where our docker container could use it.
 Let's do the first one, though.
 
-  heroku run python init_psql_db.py
+    heroku run python init_psql_db.py
 
 Then, visit your heroku app url and confirm that the `/db_test` lists your dummy
 users. :tada:
