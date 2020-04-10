@@ -268,6 +268,15 @@ You could use something like this https://hub.docker.com/r/wingrunr21/alpine-her
 creating an alias for `heroku` command pointing to the full `docker run` command
 for the container, as above for `docker-compose`.
 
+## What do I do with my code, I want to shut down the GCP instance
+
+Commit your code to a git / github repo, silly! Do the `git init` thing from your
+GCP shell, create a new github repo to push to, add your remote, and fire the
+laser!
+
+Then, you can destroy your GCP instance. later, if you want to work on it again,
+you can spin up a new instance and do `git pull`, :tada:
+
 
 ## Using a more lightweight Docker basefile, based on Alpine instead of Ubuntu.
 
