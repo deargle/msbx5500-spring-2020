@@ -181,22 +181,23 @@ otherwise (heroku doesn't use docker-compose). Repo here: [https://github.com/de
 **Project purpose?** A web-based tool which receives pcap files, parses them into netflow records, feeds those records against model(s) for predictions of is_bot (cause that's what ctu-13 does), then reports back on which records are malicious (via website)
 
 modules
-	* a python function that parses pcaps into netflows
-	* a single code file that trains the models themselves, based on any arbitrary ctu-13 dataset. outputs the models, in pickled format
-		* `models = [model for model in pickle.load(os.listdir('models'))]``
-		* multiple models --
-  			* different datasets
-  			* different classifiers for a single given dataset
-		* start with a single dataset, two classifiers
-		* flask code which loads pickled models
-	* a CRISP-DM report on the performance of the chosen models (word document? html?)
-		* feature importances
-		* talks about all of this code in the deployment
-		* markdown
-	* a way for the user to upload pcap files
-		* to a mongodb
-	* a way to store and display alerts if netflows surpass a certain malware-likelihood threshold/cutoff
-		* psql
+
+* a python function that parses pcaps into netflows
+* a single code file that trains the models themselves, based on any arbitrary ctu-13 dataset. outputs the models, in pickled format
+	* `models = [model for model in pickle.load(os.listdir('models'))]``
+	* multiple models --
+		* different datasets
+		* different classifiers for a single given dataset
+	* start with a single dataset, two classifiers
+	* flask code which loads pickled models
+* a CRISP-DM report on the performance of the chosen models (word document? html?)
+	* feature importances
+	* talks about all of this code in the deployment
+	* markdown
+* a way for the user to upload pcap files
+	* to a mongodb
+* a way to store and display alerts if netflows surpass a certain malware-likelihood threshold/cutoff
+	* psql
 
 * Professor will provide
 	* javascript to interact with skeleton routes that y'all will fill out for the app
@@ -211,6 +212,7 @@ I want the whole class to have as a deliverable a single git repository
 
 
 # Deliverables
+
 
 * A single class github repository
 * A heroku deployment of the final repo for each class member
